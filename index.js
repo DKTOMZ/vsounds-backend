@@ -4,11 +4,6 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 
-
-app.get('/',(req,res)=>{
-  res.status(200).json('Backend is live');
-});
-
 //Firebase init
 var admin = require("firebase-admin");
 admin.initializeApp({
@@ -36,9 +31,11 @@ var cart = null;
 var whitelist = [`${process.env.CLIENT_URL}`, 'https://stripe.com']
 app.use(cors({
   origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
     if (whitelist.indexOf(origin) !== -1) {
       callback(null, true)
     } else {
+      console.log(origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
@@ -244,7 +241,6 @@ app.post('/stripe-webhook', express.raw({type: 'application/json'}), (request, r
   try {
     event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
   } catch (err) {
-    console.log(err);
     response.status(400).send(`Webhook Error: ${err.message}`);
     return;
   }
