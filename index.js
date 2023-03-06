@@ -7,9 +7,8 @@ const cors = require('cors');
 
 //Firebase init
 var admin = require("firebase-admin");
-var serviceAccount = require("./configs/firebase-adminsdk.json");
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.cert(JSON.parse(process.env.SERVICE_ACCOUNT_FIREBASE)),
   databaseURL: 'https://vsounds-online-store.firebaseio.com'
 });
 const db = admin.firestore(); 
@@ -34,7 +33,7 @@ app.use(cors({
   optionsSuccessStatus: 200
 }));
 
-app.use("/webhook", express.raw({ type: "*/*" }));
+app.use("/stripe-webhook", express.raw({ type: "*/*" }));
 
 app.use(express.urlencoded({extended:false}));
 
@@ -112,7 +111,7 @@ const sendOrderEmail = (data,customer) => {
 
   transporter.sendMail(mailOptions, function(error, info){
     if (error) {
-      console.log(error);
+      return {error:error};
     } else {
     }
   }); 
@@ -135,7 +134,7 @@ const updateStock = async() => {
     });
     await batch.commit(); 
   } catch (error) {
-    console.log(error);
+    return {error:error};
   }
 };
 
@@ -146,7 +145,7 @@ const createOrder = async(customer,data) => {
   });
 
   try {
-    const response = await ordersRef.add({
+      await ordersRef.add({
       userId: customer.metadata.userId,
       customerId: data.customer,
       paymentIntentId: data.payment_intent,
@@ -160,10 +159,9 @@ const createOrder = async(customer,data) => {
       paymentStatus: data.payment_status,
       timestamp: Date.now()
     });
-    return response.id;
 
   } catch (error) {
-    console.log(error);
+    return {error:error};
   }
 
 };
@@ -244,10 +242,10 @@ app.post('/stripe-webhook', express.raw({type: 'application/json'}), (request, r
   if (eventType === 'checkout.session.completed') {
     stripe.customers.retrieve(data.customer).then(
       (customer)=>{
-        createOrder(customer,data).then((orderId)=>sendOrderEmail(data,customer));
+        createOrder(customer,data).then(()=>sendOrderEmail(data,customer));
         updateStock();
       }
-      ).catch((err)=>console.log(err.message))
+      ).catch((err)=>{return {error:err}});
   }
 
   // Return a 200 response to acknowledge receipt of the event
