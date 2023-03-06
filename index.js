@@ -45,7 +45,7 @@ app.use((req, res, next) => {
   if (req.originalUrl === '/stripewebhook') {
     next(); // Do nothing with the body because I need it in a raw state.
   } else {
-    express.urlencoded({extended:false})(req, res, next); 
+    express.json()(req, res, next); 
   }
 });
 
