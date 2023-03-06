@@ -42,11 +42,10 @@ app.use(cors({
 }));
 
 app.use((req, res, next) => {
-  console.log(req.originalUrl);
-  if (req.originalUrl === '/stripe-webhook') {
+  if (req.originalUrl === '/stripewebhook') {
     next(); // Do nothing with the body because I need it in a raw state.
   } else {
-    express.urlencoded({extended:false})(req, res, next); // ONLY do express.json() if the received request is NOT a WebHook from Stripe.
+    express.urlencoded({extended:false})(req, res, next); 
   }
 });
 
@@ -233,7 +232,7 @@ paypal.payment.create(create_payment_json, function (error, payment) {
 
 //Stripe
 //Webhook
-app.post('/stripe-webhook', express.raw({type: 'application/json'}), (request, response) => {
+app.post('/stripewebhook', express.raw({type: 'application/json'}), (request, response) => {
   const sig = request.headers['stripe-signature'];
 
   let data;
