@@ -46,8 +46,6 @@ app.use("/stripe-webhook", express.raw({ type: "*/*" }));
 
 app.use(express.urlencoded({extended:false}));
 
-app.use(express.json());
-
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 const sendOrderEmail = (data,customer) => {
