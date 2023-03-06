@@ -35,7 +35,6 @@ app.use(cors({
     if (whitelist.indexOf(origin) !== -1) {
       callback(null, true)
     } else {
-      console.log(origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
@@ -43,10 +42,11 @@ app.use(cors({
 }));
 
 app.use((req, res, next) => {
+  console.log(req.originalUrl);
   if (req.originalUrl === '/stripe-webhook') {
     next(); // Do nothing with the body because I need it in a raw state.
   } else {
-    express.urlencoded({extended:false})(req, res, next);  // ONLY do express.json() if the received request is NOT a WebHook from Stripe.
+    express.urlencoded({extended:false})(req, res, next); // ONLY do express.json() if the received request is NOT a WebHook from Stripe.
   }
 });
 
