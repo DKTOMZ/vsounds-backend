@@ -42,9 +42,13 @@ app.use(cors({
   optionsSuccessStatus: 200
 }));
 
-app.use("/stripe-webhook", express.raw({ type: "*/*" }));
-
-app.use(express.urlencoded({extended:false}));
+app.use((req, res, next) => {
+  if (req.originalUrl === '/stripe-webhook') {
+    next(); // Do nothing with the body because I need it in a raw state.
+  } else {
+    express.urlencoded({extended:false})(req, res, next);  // ONLY do express.json() if the received request is NOT a WebHook from Stripe.
+  }
+});
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
