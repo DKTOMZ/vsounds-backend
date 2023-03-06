@@ -5,6 +5,10 @@ const app = express();
 const cors = require('cors');
 
 
+app.get('/',(req,res)=>{
+  res.status(200).json('Backend is live');
+});
+
 //Firebase init
 var admin = require("firebase-admin");
 admin.initializeApp({
@@ -240,6 +244,7 @@ app.post('/stripe-webhook', express.raw({type: 'application/json'}), (request, r
   try {
     event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
   } catch (err) {
+    console.log(err);
     response.status(400).send(`Webhook Error: ${err.message}`);
     return;
   }
@@ -257,7 +262,7 @@ app.post('/stripe-webhook', express.raw({type: 'application/json'}), (request, r
   }
 
   // Return a 200 response to acknowledge receipt of the event
-  response.send();
+  response.status(200).json({received:true});
 });
 
 //Stripe checkout
