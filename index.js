@@ -28,8 +28,16 @@ var transporter = nodemailer.createTransport({
 //User cart
 var cart = null;
 
+//cors setup
+var whitelist = [`${process.env.CLIENT_URL}`, 'https://stripe.com']
 app.use(cors({
-  origin: `${process.env.CLIENT_URL}`,
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   optionsSuccessStatus: 200
 }));
 
