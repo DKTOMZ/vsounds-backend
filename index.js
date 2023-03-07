@@ -101,7 +101,7 @@ const sendOrderEmail = (data,customer) => {
                   ${items.map((item)=>{
                     return `<tr style="font-size: 14px;">
                       <td style="line-height:16px;color: #1DB954" valign="top">
-                          <img src="${item.image}" alt="${item.name}' object-fit: "cover" width="90px" height="90px"/>
+                          <img src="${item.image}" alt="${item.name}' style="object-fit:cover" width="90px" height="90px"/>
                       </td>
                       <td style="line-height:16px;color: #1DB954" valign="top">
                           <a href="${process.env.CLIENT_URL}${item.link}" target="_blank" style="text-decoration:none">${item.name}</a>                                                                                                                                                                                                                 
