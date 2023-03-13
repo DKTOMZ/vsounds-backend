@@ -49,6 +49,11 @@ app.use((req, res, next) => {
   }
 });
 
+//Home
+app.get('/',(req,res)=>{
+  res.json('Service is live!');
+});
+
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 const sendOrderEmail = (data,customer) => {
