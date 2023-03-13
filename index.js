@@ -318,4 +318,4 @@ app.post('/stripe-checkout', async (req, res) => {
   res.status(200).json(session);
 });
 
-app.listen(process.env.PAYMENT_PORT, () => console.log(`PAYMENT GATEWAY LISTENING ON PORT ${process.env.PAYMENT_PORT}`));
+app.listen(process.env.PORT, () => console.log(`PAYMENT GATEWAY LISTENING ON PORT ${process.env.PORT}`));
